@@ -14,7 +14,7 @@ interface GameDao {
     fun getAllGames(): LiveData<List<Game>>
 
     @Insert
-    suspend fun insertGame(game: Game)
+    suspend fun addGame(game: Game)
 
     @Delete
     suspend fun deleteGame(game: Game)
