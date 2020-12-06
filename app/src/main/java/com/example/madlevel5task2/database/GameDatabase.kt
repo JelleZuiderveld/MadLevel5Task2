@@ -8,8 +8,9 @@ import androidx.room.TypeConverters
 import com.example.madlevel5task2.dao.GameDao
 import com.example.madlevel5task2.model.Game
 
-@TypeConverters(Converters::class)
+
 @Database(entities = [Game::class], version = 1, exportSchema = false)
+@TypeConverters(Converters::class)
 abstract class GameDatabase: RoomDatabase() {
 
     abstract fun gameDao(): GameDao

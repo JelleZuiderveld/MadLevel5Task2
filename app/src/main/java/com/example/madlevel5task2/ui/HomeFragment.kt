@@ -1,16 +1,15 @@
 package com.example.madlevel5task2.ui
 
 import android.os.Bundle
+import android.view.*
 import androidx.fragment.app.Fragment
-import android.view.LayoutInflater
-import android.view.View
-import android.view.ViewGroup
 import android.widget.Button
 import android.widget.LinearLayout
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.Observer
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.DividerItemDecoration
+import androidx.recyclerview.widget.ItemTouchHelper
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.example.madlevel5task2.R
@@ -38,6 +37,10 @@ class HomeFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
+        fabHome.setOnClickListener {
+            findNavController().navigate(R.id.action_homeFragment_to_addGameFragment)
+        }
+
         initView()
         observeChanges()
 
@@ -47,14 +50,49 @@ class HomeFragment : Fragment() {
         rvGames.layoutManager = LinearLayoutManager(context, RecyclerView.VERTICAL, false)
         rvGames.adapter = homeAdapter
         rvGames.addItemDecoration(DividerItemDecoration(context, DividerItemDecoration.VERTICAL))
+
+        creatItemTouchHelper().attachToRecyclerView(rvGames)
     }
 
     private fun observeChanges(){
-        gameViewModel.gameData.observe(viewLifecycleOwner, Observer {
-            games ->
-            this@HomeFragment.games.clear()
-            this@HomeFragment.games.addAll(games)
+        gameViewModel.gameData.observe(viewLifecycleOwner, Observer { liveData: List<Game> ->
+            games.clear()
+            games.addAll(liveData)
+            games.sortBy { it.date }
             homeAdapter.notifyDataSetChanged()
         })
     }
+
+    private fun creatItemTouchHelper(): ItemTouchHelper{
+        val callback = object : ItemTouchHelper.SimpleCallback(0, ItemTouchHelper.LEFT) {
+
+            override fun onMove(recyclerView: RecyclerView, viewHolder: RecyclerView.ViewHolder, target: RecyclerView.ViewHolder): Boolean {
+                return false
+            }
+
+            override fun onSwiped(viewHolder: RecyclerView.ViewHolder, direction: Int) {
+                val position = viewHolder.adapterPosition
+                val remove = games[position]
+
+                gameViewModel.deleteGame(remove)
+            }
+
+        }
+
+        return ItemTouchHelper(callback)
+    }
+
+    override fun onCreateOptionsMenu(menu: Menu, inflater: MenuInflater) {
+        inflater.inflate(R.menu.menu_main, menu)
+    }
+
+    override fun onOptionsItemSelected(item: MenuItem) = when (item.itemId) {
+        R.id.delete_all -> {
+            gameViewModel.deleteAllGames()
+            true
+        } else -> {
+            super.onOptionsItemSelected(item)
+        }
+    }
+
 }
