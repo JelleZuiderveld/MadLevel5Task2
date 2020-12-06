@@ -31,6 +31,7 @@ class HomeFragment : Fragment() {
             savedInstanceState: Bundle?
     ): View? {
         // Inflate the layout for this fragment
+        setHasOptionsMenu(true)
         return inflater.inflate(R.layout.fragment_home, container, false)
     }
 
@@ -44,6 +45,10 @@ class HomeFragment : Fragment() {
         initView()
         observeChanges()
 
+    }
+
+    override fun onCreateOptionsMenu(menu: Menu, inflater: MenuInflater) {
+        inflater.inflate(R.menu.menu_main, menu)
     }
 
     private fun initView(){
@@ -82,9 +87,6 @@ class HomeFragment : Fragment() {
         return ItemTouchHelper(callback)
     }
 
-    override fun onCreateOptionsMenu(menu: Menu, inflater: MenuInflater) {
-        inflater.inflate(R.menu.menu_main, menu)
-    }
 
     override fun onOptionsItemSelected(item: MenuItem) = when (item.itemId) {
         R.id.delete_all -> {

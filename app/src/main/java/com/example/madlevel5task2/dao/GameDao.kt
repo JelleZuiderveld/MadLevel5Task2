@@ -10,7 +10,7 @@ import com.example.madlevel5task2.model.Game
 @Dao
 interface GameDao {
 
-    @Query("SELECT * FROM game_table")
+    @Query("SELECT * FROM game_table ORDER BY date desc")
     fun getAllGames(): LiveData<List<Game>>
 
     @Insert
